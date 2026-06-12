@@ -19,8 +19,22 @@ else
     echo "找到了 conda 环境位置: ${env_path}"
 fi
 
-# 尝试删除已有服务
+# 尝试停止并删除已有服务
+nssm stop DailyCFTracker
+
+if [ $? -eq 0 ]; then
+    echo "已有 DailyCFTracker 服务已成功停止"
+else
+    echo "未检测到正在运行的 DailyCFTracker 服务"
+fi
+
 nssm remove DailyCFTracker confirm
+
+if [ $? -eq 0 ]; then
+    echo "已有 DailyCFTracker 服务已成功删除"
+else
+    echo "未检测到已注册的 DailyCFTracker 服务"
+fi
 
 proj_path=$(pwd)
 
