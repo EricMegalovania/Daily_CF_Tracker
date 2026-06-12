@@ -1,7 +1,7 @@
 第一次使用前, 设置本地的仓库地址
 
 ```bash
-# 在 .env 里填写本地克隆的仓库地址
+# 在 .env 里填写本地克隆的仓库地址, 可以复制 .env.example 来编辑
 conda env create -f environment.yaml
 ```
 

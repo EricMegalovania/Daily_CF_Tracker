@@ -50,3 +50,6 @@ nssm set DailyCFTracker AppDirectory "${proj_path}"
 nssm set DailyCFTracker Start SERVICE_AUTO_START
 nssm set DailyCFTracker AppStdout "${proj_path}/service.log"
 nssm set DailyCFTracker AppStderr "${proj_path}/service_error.log"
+
+# 开启服务
+nssm start DailyCFTracker
