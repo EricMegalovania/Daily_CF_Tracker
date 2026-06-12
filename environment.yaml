@@ -1,0 +1,6 @@
+name: daily_cf_tracker
+channels:
+  - conda-forge
+dependencies:
+  - conda-forge::python=3.12.13
+  - conda-forge::flask=3.1.3

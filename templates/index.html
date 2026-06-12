@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/favicon.png">
+<script>MathJax={tex:{inlineMath:[['$','$']]}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<title>Daily CF Check-in Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 24px;
+    color: #cba6f7;
+  }
+  .search-bar {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .search-bar input {
+    width: 260px;
+    padding: 10px 16px;
+    border: 2px solid #45475a;
+    border-radius: 8px;
+    background: #313244;
+    color: #cdd6f4;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-bar input:focus { border-color: #cba6f7; }
+  .search-bar input::placeholder { color: #585b70; }
+  .search-bar button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    background: #cba6f7;
+    color: #1e1e2e;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .search-bar button:hover { background: #b4befe; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #313244;
+  }
+  th {
+    font-weight: 600;
+    color: #a6adc8;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  td a {
+    color: #89b4fa;
+    text-decoration: none;
+  }
+  td a:hover { text-decoration: underline; }
+  .diff {
+    display: inline-block;
+    min-width: 52px;
+    text-align: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .diff-g   { background: #40a02b22; color: #a6e3a1; }
+  .diff-b   { background: #1e66f522; color: #89b4fa; }
+  .diff-o   { background: #df8e1d22; color: #f9e2af; }
+  .diff-r   { background: #d20f3922; color: #f38ba8; }
+  .hint-cell { color: #a6adc8; font-size: 0.88rem; max-width: 360px; }
+  .summary {
+    text-align: center;
+    color: #a6adc8;
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+  .empty {
+    text-align: center;
+    color: #a6e3a1;
+    font-size: 1.1rem;
+    padding: 40px 20px;
+  }
+  .error {
+    text-align: center;
+    color: #f38ba8;
+    padding: 20px;
+  }
+  .loading { text-align: center; color: #f9e2af; padding: 40px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Daily CF Check-in Tracker</h1>
+  <div class="search-bar">
+    <input type="text" id="username" value="" placeholder="Meguhine">
+    <button onclick="fetchData()">Search</button>
+  </div>
+  <div id="result"></div>
+</div>
+<script>
+function diffClass(d) {
+  const v = parseInt(d.replace('*','')) || 0;
+  if (v < 1600) return 'diff-g';
+  if (v < 2100) return 'diff-b';
+  if (v < 2400) return 'diff-o';
+  return 'diff-r';
+}
+
+async function fetchData() {
+  let username = document.getElementById('username').value.trim();
+  if (!username) username = 'Meguhine';
+  const resultEl = document.getElementById('result');
+  resultEl.innerHTML = '<div class="loading">Loading...</div>';
+  try {
+    const resp = await fetch(`/api/unchecked?username=${encodeURIComponent(username)}&limit=5`);
+    const data = await resp.json();
+    if (data.error) { resultEl.innerHTML = `<div class="error">${data.error}</div>`; return; }
+    if (data.count === 0) {
+      resultEl.innerHTML = '<div class="empty">All caught up, great job!</div>';
+      return;
+    }
+    let html = '<table><thead><tr><th>Date</th><th>Diff</th><th>Problem</th><th>Hint</th><th>Solution</th><th>Submit</th></tr></thead><tbody>';
+    for (const p of data.problems) {
+      const solUrl = `https://github.com/Yawn-Sean/Daily_CF_Problems/blob/main/daily_problems/${p.year}/${p.month}/${p.date}/solution/${p.file_code}.md`;
+      const subUrl = `https://github.com/Yawn-Sean/Daily_CF_Problems/new/main/daily_problems/${p.year}/${p.month}/${p.date}/personal_submission`;
+      html += `<tr>
+        <td>${p.year}-${p.month}-${p.date}</td>
+        <td><span class="diff ${diffClass(p.difficulty)}">${p.difficulty}</span></td>
+        <td><a href="${p.url}" target="_blank">${p.code}</a></td>
+        <td class="hint-cell">${escapeHtml(p.hint)}</td>
+        <td><a href="${solUrl}" target="_blank">Editorial</a></td>
+        <td><a href="${subUrl}" target="_blank">Submit</a></td>
+      </tr>`;
+    }
+    html += '</tbody></table>';
+    html += `<div class="summary">${data.count} problem(s) found — keep going!</div>`;
+    resultEl.innerHTML = html;
+    if (window.MathJax) MathJax.typesetPromise();
+  } catch (e) {
+    resultEl.innerHTML = '<div class="error">Failed to load. Check if the server is running.</div>';
+  }
+}
+
+function escapeHtml(s) { return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+
+document.getElementById('username').addEventListener('keydown', e => { if (e.key === 'Enter') fetchData(); });
+fetchData();
+</script>
+</body>
+</html>
