@@ -2,10 +2,13 @@ import re
 import os
 from pathlib import Path
 from flask import Flask, jsonify, render_template, request, send_from_directory
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(os.getenv("REPO_PATH", Path(__file__).resolve().parent.parent))
 DAILY_DIR = BASE_DIR / "daily_problems"
 
 
