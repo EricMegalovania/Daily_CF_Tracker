@@ -149,7 +149,7 @@ async function fetchData() {
       const solUrl = `https://github.com/Yawn-Sean/Daily_CF_Problems/blob/main/daily_problems/${p.year}/${p.month}/${p.date}/solution/${p.file_code}.md`;
       const subUrl = `https://github.com/Yawn-Sean/Daily_CF_Problems/new/main/daily_problems/${p.year}/${p.month}/${p.date}/personal_submission`;
       html += `<tr>
-        <td>${p.year}-${p.month}-${p.date}</td>
+        <td>${p.year}-${p.month}-${p.date.substring(2)}</td>
         <td><span class="diff ${diffClass(p.difficulty)}">${p.difficulty}</span></td>
         <td><a href="${p.url}" target="_blank">${p.code}</a></td>
         <td class="hint-cell">${escapeHtml(p.hint)}</td>
