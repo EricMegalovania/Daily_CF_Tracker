@@ -90,6 +90,7 @@
   }
   .diff-g   { background: #40a02b22; color: #a6e3a1; }
   .diff-b   { background: #1e66f522; color: #89b4fa; }
+  .diff-p   { background: #cba6f722; color: #cba6f7; }
   .diff-o   { background: #df8e1d22; color: #f9e2af; }
   .diff-r   { background: #d20f3922; color: #f38ba8; }
   .hint-cell { color: #a6adc8; font-size: 0.88rem; max-width: 360px; }
@@ -126,7 +127,8 @@
 function diffClass(d) {
   const v = parseInt(d.replace('*','')) || 0;
   if (v < 1600) return 'diff-g';
-  if (v < 2100) return 'diff-b';
+  if (v < 1900) return 'diff-b';
+  if (v < 2100) return 'diff-p';
   if (v < 2400) return 'diff-o';
   return 'diff-r';
 }
