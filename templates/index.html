@@ -23,6 +23,25 @@
     margin-bottom: 24px;
     color: #cba6f7;
   }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .header h1 { margin-bottom: 0; }
+  .header-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .header-links a {
+    color: #89b4fa;
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+  .header-links a:hover { text-decoration: underline; }
   .search-bar {
     display: flex;
     gap: 12px;
@@ -116,7 +135,13 @@
 </head>
 <body>
 <div class="container">
-  <h1>Daily CF Check-in Tracker</h1>
+  <div class="header">
+    <h1>Daily CF Check-in Tracker</h1>
+    <div class="header-links">
+      <a href="https://github.com/Yawn-Sean/Daily_CF_Problems" target="_blank">Repo</a>
+      <a href="https://yawn-sean.github.io/Daily_CF_Problems/" target="_blank">Statistics</a>
+    </div>
+  </div>
   <div class="search-bar">
     <input type="text" id="username" value="" placeholder="Meguhine">
     <button onclick="fetchData()">Search</button>
